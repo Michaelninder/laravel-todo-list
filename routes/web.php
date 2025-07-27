@@ -7,6 +7,7 @@ use App\Livewire\Settings\Profile as SettingsProfile;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TodoListController;
 use App\Http\Controllers\TodoItemController;
+use App\Http\Controllers\NoteController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -26,6 +27,9 @@ Route::middleware(['auth'])->group(function () {
     // Todo
     Route::resource('todo', TodoListController::class);
     Route::resource('todo.items', TodoItemController::class);
+
+    // Note
+    Route::resource('notes', NoteController::class);
 });
 
 require __DIR__.'/auth.php';
