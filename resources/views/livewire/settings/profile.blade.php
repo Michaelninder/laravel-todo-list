@@ -3,6 +3,11 @@
 
     <x-settings.layout :heading="__('Profile')" :subheading="__('Update your name, email address and avatar')">
         <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6" enctype="multipart/form-data">
+            <flux:label>ID</flux:label>
+            <flux:input.group>
+                <flux:input.group.prefix>ID</flux:input.group.prefix>
+                <flux:input placeholder="{{ auth()->id() }}" disabled/>
+            </flux:input.group>
             <flux:input wire:model="name" :label="__('Name')" type="text" required autofocus autocomplete="name" />
 
             <div>
