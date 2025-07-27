@@ -8,17 +8,17 @@ class NoteEditorWrapper extends Component
 {
     public string $content = '';
     public ?string $noteId = null;
-    public string $initialContent;
+    public ?string $initialContent;
 
     protected array $rules = [
         'content' => 'nullable|string|max:102400',
     ];
 
-    public function mount(?string $noteId = null, string $initialContent = ''): void
+    public function mount(?string $noteId = null, ?string $initialContent = ''): void
     {
         $this->noteId = $noteId;
         $this->initialContent = $initialContent;
-        $this->content = $initialContent;
+        $this->content = $initialContent ?? '';
     }
 
     public function callControllerMethod(string $action): \Illuminate\Http\RedirectResponse

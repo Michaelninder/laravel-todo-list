@@ -41,7 +41,7 @@
 
                 <div>
                     <flux:label for="content">{{ __('Content') }}</flux:label>
-                    @livewire('note-editor-wrapper', ['noteId' => null, 'initialContent' => old('content')])
+                    @livewire('note-editor-wrapper', ['noteId' => null, 'initialContent' => old('content', '')])
                     @error('content')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror

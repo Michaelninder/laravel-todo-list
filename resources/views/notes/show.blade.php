@@ -33,7 +33,8 @@
             </div>
 
             <div class="border-t border-gray-200 dark:border-zinc-600 pt-6 prose dark:prose-invert">
-                <flux:editor.content content="{{ $note->content }}" />
+                {{-- Render content directly as HTML --}}
+                {!! $note->content !!}
             </div>
         </div>
     </div>
