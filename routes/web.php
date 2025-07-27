@@ -21,7 +21,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/password', SettingsPassword::class)->name('settings.password');
     Route::get('settings/appearance', SettingsAppearance::class)->name('settings.appearance');
 
-    Route::resource('todolists', PhotoController::class);
+    Route::resource('todo', TodoListController::class);
 });
 
 require __DIR__.'/auth.php';
