@@ -17,7 +17,7 @@ class TodoList extends Model
     public $incrementing = false;
 
     protected $fillable  = [
-        'user_id'
+        'user_id',
         'name',
         'description',
     ];
@@ -41,9 +41,14 @@ class TodoList extends Model
         return $this->hasMany(Comment::class, 'list_id', 'id');
     }
 
+    public function item_count()
+    {
+        return $this->itmes->count();
+    }
+
     public static function booted() {
-        static::creating(function ($this) {
-            $this->id = Str::uuid();
+        static::creating(function ($model) {
+            $model->id = Str::uuid();
         });
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\TodoList;
+use App\Models\TodoItem;
 use Illuminate\Http\Request;
 
 class TodoListController extends Controller
@@ -12,7 +13,9 @@ class TodoListController extends Controller
      */
     public function index()
     {
-        return view('todo.index');
+        return view('todo.index', [
+            'lists' => TodoList::where('user' == auth()->user())->get(),
+        ]);
     }
 
     /**

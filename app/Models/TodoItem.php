@@ -31,8 +31,8 @@ class TodoItem extends Model
     }
 
     public static function booted() {
-        static::creating(function ($this) {
-            $this->id = Str::uuid();
+        static::creating(function ($model) {
+            $model->id = Str::uuid();
         });
     }
 }
