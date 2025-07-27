@@ -1,8 +1,9 @@
 <?php
 
-use App\Livewire\Settings\Appearance;
-use App\Livewire\Settings\Password;
-use App\Livewire\Settings\Profile;
+use App\Livewire\Settings\Appearance as SettingsAppearance;
+use App\Livewire\Settings\Password as SettingsPassword;
+use App\Livewire\Settings\Profile as SettingsProfile;
+use App\Livewire\Settings\Avavtar as SettingsAvavtar;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -16,10 +17,9 @@ Route::view('dashboard', 'dashboard')
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
-    Route::get('settings/profile', Profile::class)->name('settings.profile');
-    Route::get('settings/avatar', Appearance::class)->name('settings.avatar');
-    Route::get('settings/password', Password::class)->name('settings.password');
-    Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
+    Route::get('settings/profile', SettingsProfile::class)->name('settings.profile');
+    Route::get('settings/password', SettingsPassword::class)->name('settings.password');
+    Route::get('settings/appearance', SettingsAppearance::class)->name('settings.appearance');
 });
 
 require __DIR__.'/auth.php';
