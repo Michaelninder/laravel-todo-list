@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\TodoList;
 use App\Models\TodoItem;
+use App\Http\Requests\StoreTodoListRequest; // Assuming you're using this for store
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\ModelNotFoundException; // Import this for 404
 
 class TodoListController extends Controller
 {
@@ -15,7 +17,7 @@ class TodoListController extends Controller
     public function index()
     {
         return view('todo.index', [
-            'lists' => TodoList::where('user_id', Auth::id())->with(['items', 'user'])->get(),
+            'lists' => TodoList::where('user_id', Auth::id())->withCount('items')->get(),
         ]);
     }
 
@@ -30,18 +32,13 @@ class TodoListController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreTodoListRequest $request) // Using StoreTodoListRequest for validation
     {
-        $validatedData = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:1000'],
-        ]);
+        $validatedData = $request->validated();
 
-        $todoList = TodoList::create([
-            'user_id' => Auth::id(),
+        $todoList = Auth::user()->todoLists()->create([
             'name' => $validatedData['name'],
             'description' => $validatedData['description'] ?? null,
-            
         ]);
 
         return redirect()->route('todo.index')->with('success', __('Todo list created successfully!'));
@@ -49,33 +46,22 @@ class TodoListController extends Controller
 
     /**
      * Display the specified resource.
+     * Use $id parameter and manually find the model.
      */
-    public function show(TodoList $todoList)
+    public function show($id)
     {
+        try {
+            $todoList = TodoList::findOrFail($id); // Find the model, throws 404 if not found
+        } catch (ModelNotFoundException $e) {
+            abort(404, 'Todo list not found.');
+        }
 
-        //if ($todoList->user_id !== Auth::id()) {
-        //    abort(403, 'Unauthorized action.');
-        //}
-
-        //$list = TodoList::where('id' === $todoList)->with('items')->get();
-        //$list = $todoList;
-        /*
-        $list = TodoList::findOrFail($todoList)->with('items')->get();
-        return view('todo.show', [
-            'list' => $list,
-        ]);
-        */
-        
-        $todoList->load('items');
-        $todoList->load('user');
-
-        dd('$todoList->id, $todoList->user_id, Auth::id(), Auth::user()->id' , $todoList->id, $todoList->user_id, Auth::id(), Auth::user()->id);
-
+        // Authorization check
         if ($todoList->user_id !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
 
-        $todoList->load('items');
+        $todoList->load('items'); // Eager load items for the view
 
         return view('todo.show', [
             'list' => $todoList,
@@ -84,14 +70,22 @@ class TodoListController extends Controller
 
     /**
      * Show the form for editing the specified resource.
+     * Use $id parameter and manually find the model.
      */
-    public function edit(TodoList $todoList)
+    public function edit($id)
     {
+        try {
+            $todoList = TodoList::findOrFail($id); // Find the model, throws 404 if not found
+        } catch (ModelNotFoundException $e) {
+            abort(404, 'Todo list not found for editing.');
+        }
+
+        // Authorization check
         if ($todoList->user_id !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
 
-        $todoList->load('items');
+        $todoList->load('items'); // Eager load items if displayed on the edit page
 
         return view('todo.edit', [
             'list' => $todoList,
@@ -100,17 +94,26 @@ class TodoListController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * Use $id parameter and manually find the model.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\TodoList  $todoList
+     * @param  string  $id  The UUID of the TodoList
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, TodoList $todoList)
+    public function update(Request $request, $id)
     {
+        try {
+            $todoList = TodoList::findOrFail($id); // Find the model
+        } catch (ModelNotFoundException $e) {
+            abort(404, 'Todo list not found for updating.');
+        }
+
+        // Authorization check
         if ($todoList->user_id !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
 
+        // Validation (can use a Form Request here too)
         $validatedData = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
@@ -118,14 +121,25 @@ class TodoListController extends Controller
 
         $todoList->update($validatedData);
 
-        return redirect()->route('todo.show', $todoList)->with('success', __('Todo list updated successfully!'));
+        return redirect()->route('todo.show', $todoList->id)->with('success', __('Todo list updated successfully!'));
     }
 
     /**
      * Remove the specified resource from storage.
+     * Use $id parameter and manually find the model.
+     *
+     * @param  string  $id  The UUID of the TodoList
+     * @return \Illuminate\Http\Response
      */
-    public function destroy(TodoList $todoList)
+    public function destroy($id)
     {
+        try {
+            $todoList = TodoList::findOrFail($id); // Find the model
+        } catch (ModelNotFoundException $e) {
+            abort(404, 'Todo list not found for deletion.');
+        }
+
+        // Authorization check
         if ($todoList->user_id !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
