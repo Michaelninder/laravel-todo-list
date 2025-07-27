@@ -3,9 +3,10 @@
 use App\Livewire\Settings\Appearance as SettingsAppearance;
 use App\Livewire\Settings\Password as SettingsPassword;
 use App\Livewire\Settings\Profile as SettingsProfile;
-use App\Livewire\Settings\Avavtar as SettingsAvavtar;
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TodoListController;
+use App\Http\Controllers\TodoItemController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -22,7 +23,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/password', SettingsPassword::class)->name('settings.password');
     Route::get('settings/appearance', SettingsAppearance::class)->name('settings.appearance');
 
+    // Todo
     Route::resource('todo', TodoListController::class);
+    Route::resource('todo.items', TodoItemController::class);
 });
 
 require __DIR__.'/auth.php';

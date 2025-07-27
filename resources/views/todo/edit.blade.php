@@ -5,7 +5,7 @@
         </div>
 
         <div class="bg-white dark:bg-zinc-700 rounded-lg shadow-md p-6 max-w-lg mx-auto w-full">
-            <form action="{{ route('todo.update', $list) }}" method="POST" class="space-y-6">
+            <form action="{{ route('todo.update', $list->id) }}" method="POST" class="space-y-6">
                 @csrf
                 @method('PUT')
 
@@ -55,15 +55,19 @@
                                 {{ ucfirst(str_replace('_', ' ', $item->state)) }}
                             </span>
                             <a href="{{ route('todo.items.edit', ['todo' => $list->id, 'item' => $item->id]) }}" class="text-sm text-primary-500 hover:text-primary-700">{{ __('Edit Item') }}</a>
-                            {{-- <button wire:click="deleteItem('{{ $item->id }}')" class="text-red-500 hover:text-red-700 text-sm">Delete</button> --}}
+                            {{-- <form action="{{ route('todo.items.destroy', ['todo' => $list->id, 'item' => $item->id]) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-500 hover:text-red-700 text-sm" onclick="return confirm('Are you sure you want to delete this item?')">Delete</button>
+                            </form> --}}
                         </div>
                     </div>
                 @empty
                     <p class="text-gray-600 dark:text-gray-300">{{ __('No items in this list yet.') }}</p>
                 @endforelse
 
-                <div class="mt-4">
-                    <flux:button href="{{ route('todo.items.create', $list) }}" variant="secondary">
+                <div class="mt-4 flex justify-end">
+                    <flux:button href="{{ route('todo.items.create', $list->id) }}" variant="secondary">
                         {{ __('Add New Item') }}
                     </flux:button>
                 </div>

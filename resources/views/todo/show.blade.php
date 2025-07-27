@@ -3,13 +3,13 @@
         <div class="flex items-center justify-between mb-4">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $list->name }}</h1>
             <div class="flex gap-2">
-                <flux:button href="{{ route('todo.edit', $list) }}" wire:navigate>
+                <flux:button href="{{ route('todo.edit', $list->id) }}" wire:navigate>
                     {{ __('Edit List') }}
                 </flux:button>
-                <form action="{{ route('todo.destroy', $list) }}" method="POST">
+                <form action="{{ route('todo.destroy', $list->id) }}" method="POST">
                     @csrf
                     @method('DELETE')
-                    <flux:button type="submit" variant="destructive" onclick="return confirm('{{ __('Are you sure you want to delete this todo list?') }}')">
+                    <flux:button type="submit" variant="danger" onclick="return confirm('{{ __('Are you sure you want to delete this todo list?') }}')">
                         {{ __('Delete List') }}
                     </flux:button>
                 </form>
@@ -54,7 +54,7 @@
                 @endforelse
 
                 <div class="mt-4 flex justify-end">
-                    <flux:button href="{{ route('todo.items.create', $list) }}" variant="secondary">
+                    <flux:button href="{{ route('todo.items.create', $list->id) }}" variant="primary">
                         {{ __('Add New Item') }}
                     </flux:button>
                 </div>
