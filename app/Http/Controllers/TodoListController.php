@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\TodoList;
 use App\Models\TodoItem;
+use App\Http\Requests\StoreTodoListRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,7 +16,7 @@ class TodoListController extends Controller
     public function index()
     {
         return view('todo.index', [
-            'lists' => TodoList::where('user_id', Auth::id())->get(),
+            'lists' => TodoList::where('user_id', Auth::id())->withCount('items')->get(),
         ]);
     }
 
@@ -30,18 +31,13 @@ class TodoListController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreTodoListRequest $request)
     {
-        $validatedData = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:1000'],
-        ]);
+        $validatedData = $request->validated();
 
-        $todoList = TodoList::create([
-            'user_id' => Auth::id(),
+        $todoList = Auth::user()->todoLists()->create([
             'name' => $validatedData['name'],
             'description' => $validatedData['description'] ?? null,
-            
         ]);
 
         return redirect()->route('todo.index')->with('success', __('Todo list created successfully!'));
@@ -52,7 +48,31 @@ class TodoListController extends Controller
      */
     public function show(TodoList $todoList)
     {
-        //
+
+        //if ($todoList->user_id !== Auth::id()) {
+        //    abort(403, 'Unauthorized action.');
+        //}
+
+        //$list = TodoList::where('id' === $todoList)->with('items')->get();
+        //$list = $todoList;
+        /*
+        $list = TodoList::findOrFail($todoList)->with('items')->get();
+        return view('todo.show', [
+            'list' => $list,
+        ]);
+        */
+        
+        dd($todoList->id, $todoList->user_id, Auth::id(), Auth::user()->id); // Check IDs
+
+        if ($todoList->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $todoList->load('items');
+
+        return view('todo.show', [
+            'list' => $todoList,
+        ]);
     }
 
     /**
@@ -60,15 +80,38 @@ class TodoListController extends Controller
      */
     public function edit(TodoList $todoList)
     {
-        //
+        if ($todoList->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $todoList->load('items');
+
+        return view('todo.edit', [
+            'list' => $todoList,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\TodoList  $todoList
+     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, TodoList $todoList)
     {
-        //
+        if ($todoList->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $validatedData = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $todoList->update($validatedData);
+
+        return redirect()->route('todo.show', $todoList)->with('success', __('Todo list updated successfully!'));
     }
 
     /**
@@ -76,6 +119,12 @@ class TodoListController extends Controller
      */
     public function destroy(TodoList $todoList)
     {
-        //
+        if ($todoList->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $todoList->delete();
+
+        return redirect()->route('todo.index')->with('success', __('Todo list deleted successfully!'));
     }
 }
