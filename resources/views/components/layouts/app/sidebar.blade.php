@@ -27,22 +27,16 @@
 
             <!-- Desktop User Menu -->
             <flux:dropdown class="hidden lg:block" position="bottom" align="start">
-                <flux:profile
-                    :name="auth()->user()->name"
-                    :initials="auth()->user()->initials()"
-                    icon:trailing="chevrons-up-down"
-                />
+                <flux:profile icon:trailing="chevrons-up-down" icon="" :name="auth()->user()->name">
+                    {!! auth()->user()->avatar_html !!}
+                </flux:profile>
 
                 <flux:menu class="w-[220px]">
                     <flux:menu.radio.group>
                         <div class="p-0 text-sm font-normal">
                             <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
                                 <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
-                                    <span
-                                        class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white"
-                                    >
-                                        {{ auth()->user()->initials() }}
-                                    </span>
+                                    {!! auth()->user()->avatar_html !!}
                                 </span>
 
                                 <div class="grid flex-1 text-start text-sm leading-tight">
@@ -78,30 +72,17 @@
             <flux:spacer />
 
             <flux:dropdown position="top" align="end">
-                <flux:profile
-                    :initials="auth()->user()->initials()"
-                    icon-trailing="chevron-down"
-                />
+                <flux:profile icon-trailing="chevron-down" icon="" :name="auth()->user()->name">
+                    {!! auth()->user()->avatar_html !!}
+                </flux:profile>
 
                 <flux:menu>
                     <flux:menu.radio.group>
                         <div class="p-0 text-sm font-normal">
                             <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
                                 <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
-                                    @if (auth()->user()->avatar())
-                                        <img
-                                            class="aspect-square h-full w-full object-cover"
-                                            src="{{ auth()->user()->avatar() }}"
-                                            alt="{{ auth()->user()->name }}'s avatar"
-                                        />
-                                    @else
-                                        <span
-                                            class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white"
-                                        >
-                                            {{ auth()->user()->initials() }}
-                                        </span>
-                                    @endif
-                                </span>                                
+                                    {!! auth()->user()->avatar_html !!}
+                                </span>
 
                                 <div class="grid flex-1 text-start text-sm leading-tight">
                                     <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
