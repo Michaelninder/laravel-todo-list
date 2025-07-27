@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\TodoList;
 use App\Models\TodoItem;
-use App\Http\Requests\StoreTodoListRequest; // Assuming you're using this for store
+use App\Http\Requests\StoreTodoListRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\ModelNotFoundException; // Import this for 404
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class TodoListController extends Controller
 {
@@ -32,9 +32,12 @@ class TodoListController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreTodoListRequest $request) // Using StoreTodoListRequest for validation
+    public function store(Request $request)
     {
-        $validatedData = $request->validated();
+        $validatedData = $request->validate([
+            'name' => ['required', 'string', 'max:20'],
+            'description' => ['nullable', 'string', 'max:127'],
+        ]);
 
         $todoList = Auth::user()->todoLists()->create([
             'name' => $validatedData['name'],
@@ -51,17 +54,16 @@ class TodoListController extends Controller
     public function show($id)
     {
         try {
-            $todoList = TodoList::findOrFail($id); // Find the model, throws 404 if not found
+            $todoList = TodoList::findOrFail($id);
         } catch (ModelNotFoundException $e) {
             abort(404, 'Todo list not found.');
         }
 
-        // Authorization check
         if ($todoList->user_id !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
 
-        $todoList->load('items'); // Eager load items for the view
+        $todoList->load('items');
 
         return view('todo.show', [
             'list' => $todoList,
@@ -75,7 +77,7 @@ class TodoListController extends Controller
     public function edit($id)
     {
         try {
-            $todoList = TodoList::findOrFail($id); // Find the model, throws 404 if not found
+            $todoList = TodoList::findOrFail($id);
         } catch (ModelNotFoundException $e) {
             abort(404, 'Todo list not found for editing.');
         }
@@ -85,7 +87,7 @@ class TodoListController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $todoList->load('items'); // Eager load items if displayed on the edit page
+        $todoList->load('items');
 
         return view('todo.edit', [
             'list' => $todoList,
@@ -103,17 +105,15 @@ class TodoListController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $todoList = TodoList::findOrFail($id); // Find the model
+            $todoList = TodoList::findOrFail($id);
         } catch (ModelNotFoundException $e) {
             abort(404, 'Todo list not found for updating.');
         }
 
-        // Authorization check
         if ($todoList->user_id !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
 
-        // Validation (can use a Form Request here too)
         $validatedData = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
@@ -134,12 +134,11 @@ class TodoListController extends Controller
     public function destroy($id)
     {
         try {
-            $todoList = TodoList::findOrFail($id); // Find the model
+            $todoList = TodoList::findOrFail($id);
         } catch (ModelNotFoundException $e) {
             abort(404, 'Todo list not found for deletion.');
         }
 
-        // Authorization check
         if ($todoList->user_id !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
