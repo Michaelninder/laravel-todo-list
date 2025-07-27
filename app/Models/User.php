@@ -13,6 +13,16 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
+    protected $keyType = 'string';
+    public $incrementing = false;
+
+    public static function booted()
+    {
+        static::creating(function ($model) {
+            $model->id = Str::uuid();
+        });
+    }
+    
     /**
      * The attributes that are mass assignable.
      *
