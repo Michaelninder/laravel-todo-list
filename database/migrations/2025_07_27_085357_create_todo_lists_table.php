@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignID('user_id');
             $table->string('name')->default('New Todo List');
-            $table->text('desctiption')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     

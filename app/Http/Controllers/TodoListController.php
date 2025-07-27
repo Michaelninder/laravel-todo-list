@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\TodoList;
 use App\Models\TodoItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TodoListController extends Controller
 {
@@ -14,7 +15,7 @@ class TodoListController extends Controller
     public function index()
     {
         return view('todo.index', [
-            'lists' => TodoList::where('user' == auth()->user())->get(),
+            'lists' => TodoList::where('user_id', Auth::id())->get(),
         ]);
     }
 
@@ -23,7 +24,7 @@ class TodoListController extends Controller
      */
     public function create()
     {
-        //
+        return view('todo.create');
     }
 
     /**
@@ -31,7 +32,19 @@ class TodoListController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $todoList = TodoList::create([
+            'user_id' => Auth::id(),
+            'name' => $validatedData['name'],
+            'description' => $validatedData['description'] ?? null,
+            
+        ]);
+
+        return redirect()->route('todo.index')->with('success', __('Todo list created successfully!'));
     }
 
     /**

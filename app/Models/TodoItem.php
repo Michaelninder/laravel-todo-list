@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class TodoItem extends Model
 {
@@ -19,13 +20,13 @@ class TodoItem extends Model
         'list_id',
         'name',
         'state',
-    ]
+    ];
     /**
-     * Get the user that owns the TodoItem
+     * Get the TodoList that owns the TodoItem
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user(): BelongsTo
+    public function todoList(): BelongsTo
     {
         return $this->belongsTo(TodoList::class, 'list_id', 'id');
     }
