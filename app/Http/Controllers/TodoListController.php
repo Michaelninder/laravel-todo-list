@@ -15,7 +15,7 @@ class TodoListController extends Controller
     public function index()
     {
         return view('todo.index', [
-            'lists' => TodoList::where('user_id', Auth::id())->get(),
+            'lists' => TodoList::where('user_id', Auth::id())->with(['items', 'user'])->get(),
         ]);
     }
 
@@ -66,7 +66,10 @@ class TodoListController extends Controller
         ]);
         */
         
-        dd($todoList->id, $todoList->user_id, Auth::id(), Auth::user()->id); // Check IDs
+        $todoList->load('items');
+        $todoList->load('user');
+
+        dd('$todoList->id, $todoList->user_id, Auth::id(), Auth::user()->id' , $todoList->id, $todoList->user_id, Auth::id(), Auth::user()->id);
 
         if ($todoList->user_id !== Auth::id()) {
             abort(403, 'Unauthorized action.');
