@@ -21,7 +21,7 @@ return new class extends Migration
     
         Schema::create('todo_items', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUUID('list_id');
+            $table->foreignUuid('list_id');
             $table->string('name');
             $table->enum('state', ['done', 'in_progress', 'open', 'canelled'])->default('open');
             $table->timestamps();
