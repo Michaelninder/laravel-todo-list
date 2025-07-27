@@ -67,7 +67,7 @@
                 @endforelse
 
                 <div class="mt-4 flex justify-end">
-                    <flux:button href="{{ route('todo.items.create', $list->id) }}" variant="secondary">
+                    <flux:button href="{{ route('todo.items.create', $list->id) }}" variant="primary">
                         {{ __('Add New Item') }}
                     </flux:button>
                 </div>

@@ -2,63 +2,122 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TodoList;
+use App\Models\TodoItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class TodoItemController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function create($todoId)
     {
-        //
+        try {
+            $todoList = TodoList::findOrFail($todoId);
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
+
+        if ($todoList->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        return view('todo.items.create', [
+            'list' => $todoList,
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(Request $request, $todoId)
     {
-        //
+        try {
+            $todoList = TodoList::findOrFail($todoId);
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
+
+        if ($todoList->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $validatedData = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'state' => ['required', 'in:done,in_progress,open,cancelled'],
+        ]);
+
+        $todoList->items()->create([
+            'name' => $validatedData['name'],
+            'state' => $validatedData['state'] ?? 'open',
+        ]);
+
+        return redirect()->route('todo.show', $todoList->id)->with('success', __('Item added successfully!'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function edit($todoId, TodoItem $item)
     {
-        //
+        try {
+            $todoList = TodoList::findOrFail($todoId);
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
+
+        if ($todoList->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if ($item->list_id !== $todoList->id) {
+             abort(404);
+        }
+
+        return view('todo.items.edit', [
+            'list' => $todoList,
+            'item' => $item,
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function update(Request $request, $todoId, TodoItem $item)
     {
-        //
+        try {
+            $todoList = TodoList::findOrFail($todoId);
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
+
+        if ($todoList->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if ($item->list_id !== $todoList->id) {
+             abort(404);
+        }
+
+        $validatedData = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'state' => ['required', 'in:done,in_progress,open,cancelled'],
+        ]);
+
+        $item->update($validatedData);
+
+        return redirect()->route('todo.show', $todoList->id)->with('success', __('Item updated successfully!'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function destroy($todoId, TodoItem $item)
     {
-        //
-    }
+        try {
+            $todoList = TodoList::findOrFail($todoId);
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        if ($todoList->user_id !== Auth::id()) {
+            abort(403);
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        if ($item->list_id !== $todoList->id) {
+             abort(404);
+        }
+
+        $item->delete();
+
+        return redirect()->route('todo.show', $todoList->id)->with('success', __('Item deleted successfully!'));
     }
 }
