@@ -28,9 +28,6 @@
                             <a href="{{ route('todo.edit', $list) }}" wire:navigate class="text-primary-500 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300">
                                 {{ __('Edit') }}
                             </a>
-                            {{-- <button wire:click="deleteList('{{ $list->id }}')" class="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">
-                                {{ __('Delete') }}
-                            </button> --}}
                         </div>
                     </div>
                 </div>

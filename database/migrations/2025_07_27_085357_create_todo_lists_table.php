@@ -23,7 +23,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('list_id');
             $table->string('name');
-            $table->enum('state', ['done', 'in_progress', 'open', 'canelled'])->default('open');
+            $table->enum('state', ['done', 'in_progress', 'open', 'cancelled'])->default('open');
             $table->timestamps();
         });
     }
