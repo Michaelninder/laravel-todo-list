@@ -1,5 +1,10 @@
 <x-layouts.app :title="__('Todo Lists')">
     <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
+        <flux:breadcrumbs>
+            <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" wire:navigate />
+            <flux:breadcrumbs.item>{{ __('Todo Lists') }}</flux:breadcrumbs.item>
+        </flux:breadcrumbs>
+
         <div class="flex items-center justify-between mb-4">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ __('Your Todo Lists') }}</h1>
             <flux:button href="{{ route('todo.create') }}" wire:navigate>
@@ -12,7 +17,7 @@
                 <div class="bg-white dark:bg-zinc-700 rounded-lg shadow-md p-6 flex flex-col justify-between">
                     <div>
                         <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                            <a href="{{ route('todo.show', $list) }}" wire:navigate class="hover:text-primary-600 dark:hover:text-primary-400">
+                            <a href="{{ route('todo.show', $list->id) }}" wire:navigate class="hover:text-primary-600 dark:hover:text-primary-400">
                                 {{ $list->name }}
                             </a>
                         </h2>
@@ -25,7 +30,7 @@
                             {{ trans_choice('{0} No items|{1} 1 item|[2,*] :count items', $list->items_count, ['count' => $list->items_count]) }}
                         </span>
                         <div class="flex space-x-2">
-                            <a href="{{ route('todo.edit', $list) }}" wire:navigate class="text-primary-500 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300">
+                            <a href="{{ route('todo.edit', $list->id) }}" wire:navigate class="text-primary-500 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300">
                                 {{ __('Edit') }}
                             </a>
                         </div>

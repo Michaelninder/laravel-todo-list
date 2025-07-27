@@ -1,5 +1,12 @@
 <x-layouts.app :title="__('Edit Item: ') . $item->name">
     <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
+        <flux:breadcrumbs>
+            <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" wire:navigate />
+            <flux:breadcrumbs.item href="{{ route('todo.index') }}" wire:navigate>{{ __('Todo Lists') }}</flux:breadcrumbs.item>
+            <flux:breadcrumbs.item href="{{ route('todo.show', $list->id) }}" wire:navigate>{{ $list->name }}</flux:breadcrumbs.item>
+            <flux:breadcrumbs.item>{{ __('Edit Item') }}</flux:breadcrumbs.item>
+        </flux:breadcrumbs>
+
         <div class="flex items-center justify-between mb-4">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ __('Edit Item: ') . $item->name }}</h1>
         </div>

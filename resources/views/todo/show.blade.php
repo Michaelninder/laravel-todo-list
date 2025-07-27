@@ -1,5 +1,11 @@
 <x-layouts.app :title="$list->name">
     <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
+        <flux:breadcrumbs>
+            <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" wire:navigate />
+            <flux:breadcrumbs.item href="{{ route('todo.index') }}" wire:navigate>{{ __('Todo Lists') }}</flux:breadcrumbs.item>
+            <flux:breadcrumbs.item>{{ $list->name }}</flux:breadcrumbs.item>
+        </flux:breadcrumbs>
+
         <div class="flex items-center justify-between mb-4">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $list->name }}</h1>
             <div class="flex gap-2">
@@ -26,39 +32,7 @@
                 @endif
             </div>
 
-            <div class="border-t border-gray-200 dark:border-zinc-600 pt-6">
-                <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">{{ __('List Items') }}</h2>
-                @forelse ($list->items as $item)
-                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-zinc-800 rounded-md mb-2">
-                        <div class="flex items-center gap-3">
-                            <input type="checkbox"
-                                   id="item-{{ $item->id }}"
-                                   class="form-checkbox h-5 w-5 text-primary-600 rounded"
-                                   @checked($item->state === 'done')
-                                   onclick="return false;"
-                            >
-                            <label for="item-{{ $item->id }}" class="text-gray-800 dark:text-gray-200
-                                @if($item->state === 'done') line-through text-gray-500 dark:text-gray-400 @endif">
-                                {{ $item->name }}
-                            </label>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs px-2 py-1 rounded-full
-                                @if($item->state === 'done') bg-green-200 text-green-800 @elseif($item->state === 'in_progress') bg-blue-200 text-blue-800 @elseif($item->state === 'cancelled') bg-red-200 text-red-800 @else bg-gray-200 text-gray-800 @endif">
-                                {{ ucfirst(str_replace('_', ' ', $item->state)) }}
-                            </span>
-                        </div>
-                    </div>
-                @empty
-                    <p class="text-gray-600 dark:text-gray-300">{{ __('No items in this list yet.') }}</p>
-                @endforelse
-
-                <div class="mt-4 flex justify-end">
-                    <flux:button href="{{ route('todo.items.create', $list->id) }}" variant="primary">
-                        {{ __('Add New Item') }}
-                    </flux:button>
-                </div>
-            </div>
+            @livewire('show-todo-list-items', ['list' => $list])
         </div>
     </div>
 </x-layouts.app>

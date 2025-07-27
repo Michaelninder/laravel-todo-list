@@ -1,5 +1,12 @@
 <x-layouts.app :title="__('Edit Todo List: ') . $list->name">
     <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
+        <flux:breadcrumbs>
+            <flux:breadcrumbs.item href="{{ route('dashboard') }}" icon="home" wire:navigate />
+            <flux:breadcrumbs.item href="{{ route('todo.index') }}" wire:navigate>{{ __('Todo Lists') }}</flux:breadcrumbs.item>
+            <flux:breadcrumbs.item href="{{ route('todo.show', $list->id) }}" wire:navigate>{{ $list->name }}</flux:breadcrumbs.item>
+            <flux:breadcrumbs.item>{{ __('Edit') }}</flux:breadcrumbs.item>
+        </flux:breadcrumbs>
+
         <div class="flex items-center justify-between mb-4">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ __('Edit Todo List') }}</h1>
         </div>
@@ -55,11 +62,6 @@
                                 {{ ucfirst(str_replace('_', ' ', $item->state)) }}
                             </span>
                             <a href="{{ route('todo.items.edit', ['todo' => $list->id, 'item' => $item->id]) }}" class="text-sm text-primary-500 hover:text-primary-700">{{ __('Edit Item') }}</a>
-                            {{-- <form action="{{ route('todo.items.destroy', ['todo' => $list->id, 'item' => $item->id]) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-500 hover:text-red-700 text-sm" onclick="return confirm('Are you sure you want to delete this item?')">Delete</button>
-                            </form> --}}
                         </div>
                     </div>
                 @empty
