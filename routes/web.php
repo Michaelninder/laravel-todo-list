@@ -20,6 +20,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/profile', SettingsProfile::class)->name('settings.profile');
     Route::get('settings/password', SettingsPassword::class)->name('settings.password');
     Route::get('settings/appearance', SettingsAppearance::class)->name('settings.appearance');
+
+    Route::resource('todolists', PhotoController::class);
 });
 
 require __DIR__.'/auth.php';
